@@ -31,7 +31,11 @@ module.exports = function(grunt) {
             },
             scripts: {
                 files: ['app/**/*.js'],
-                tasks: ['jshint'],
+                tasks: ['jshint']
+            },
+            sass: {
+                files: ['app/sass/**/*.scss'],
+                tasks: ['sass']
             }
         },
         jshint: { 
@@ -40,7 +44,20 @@ module.exports = function(grunt) {
             },
 			preConcat: ['app/js/**/*.js']
 		},
-
+        sass: {
+            dist: {
+                /*files: {
+                    'app/css/main.css' : 'app/sass/main.scss'
+                }*/
+                files: [{
+                    expand: true,
+                    cwd: 'app/styles/sass',
+                    src: ['*.scss'],
+                    dest: 'app/styles',
+                    ext: '.css'
+                }]
+            }
+        },
         clean: {
           build: {
             src: ['prod/'] 
@@ -83,7 +100,7 @@ module.exports = function(grunt) {
                 options: {
                     separator: ';'
                 },
-                src: ['app/css/*.css', 'app/bower_components/bootstrap/dist/css/bootstrap.css'],
+                src: ['app/styles/*.css', 'app/bower_components/bootstrap/dist/css/bootstrap.css'],
                 dest: 'prod/styles/app-main.css'
             }
 		},
@@ -144,6 +161,12 @@ module.exports = function(grunt) {
                 // Gets the port from the connect configuration
                 path: 'http://localhost:<%= connect.all.options.port%>/app'
             }
+        },
+        
+        karma: {
+            unit: {
+                configFile: 'test/karma.conf.js'
+            }
         }
         
           
@@ -151,6 +174,7 @@ module.exports = function(grunt) {
    
     
     grunt.registerTask('build',[
+        'sass',
         'clean',
         'copy:all',
         'useminPrepare',
@@ -160,7 +184,6 @@ module.exports = function(grunt) {
         'usemin',
         'htmlmin'
     ]);
-    
     grunt.registerTask('server:prod', ['open:prod', 'connect'])
     grunt.registerTask('server:dev', ['open:dev', 'connect'])
     
